@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class MovimientoPersonaje : MonoBehaviour
 {
+    [SerializeField]
     private Rigidbody rb;
     private Animator anim;
 
@@ -35,7 +36,7 @@ public class MovimientoPersonaje : MonoBehaviour
     //Raycast para salto
     private Ray rayo;
     private RaycastHit impactoRayo;
-    [SerializeField] float longitudRayo = 10.0f;
+    [SerializeField] float longitudRayo = 0.4f;
 
     // COGEMOS LOS COMPONENTES
     private void Awake()
@@ -47,20 +48,17 @@ public class MovimientoPersonaje : MonoBehaviour
     private void Update()
     {
         // Definimos el origen y la direccion del rayo
-        rayo.origin = transform.position;
+        rayo.origin = transform.position + (new Vector3(0.0f, 0.2f, 0.0f));
         rayo.direction = -transform.up;
 
         // Activar animacion de movimiento salto
-        if (Physics.Raycast(rayo, out impactoRayo))
+        if (Physics.Raycast(rayo, out impactoRayo, longitudRayo) && Input.GetButtonDown("Jump"))
         {
-            if (Input.GetButtonDown("Jump") && (impactoRayo.distance < 0.01f))
-            {
-                rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
-                anim.SetTrigger("Jump");
-            }
-
+            rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
+            anim.SetTrigger("Jump");
         }
-        Debug.DrawRay(rayo.origin, rayo.direction * longitudRayo, Color.blue);
+
+        Debug.DrawRay(rayo.origin, rayo.direction * longitudRayo * 10, Color.blue);
         // Activar la animación de movimiento ataque
         if (Input.GetButtonDown("Fire1"))
         {
